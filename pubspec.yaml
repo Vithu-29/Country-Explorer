@@ -1,6 +1,6 @@
 name: country_explorer
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_native_splash: ^2.4.7
+  get: ^4.7.3
+  shared_preferences: ^2.5.4
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +20,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/app_logo/
