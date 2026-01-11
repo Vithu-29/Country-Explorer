@@ -1,3 +1,6 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:country_explorer/controllers/country_controller.dart';
 import 'package:country_explorer/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,6 +17,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final countryController = Get.put(CountryController());
     return Scaffold(
       appBar: CustomAppBar(
         title: Column(
@@ -55,18 +59,28 @@ class HomeScreen extends StatelessWidget {
 
             // Country List
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: AppSizes.spaceBtwItems,
-                    ),
-                    child: CountryTile(),
-                  );
-                },
-              ),
+              child: Obx(() {
+                if (countryController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (countryController.countryList.isEmpty) {
+                  return const Center(child: Text("No countries found"));
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: countryController.countryList.length,
+                  itemBuilder: (context, index) {
+                    final country = countryController.countryList[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: AppSizes.spaceBtwItems,
+                      ),
+                      child: CountryTile(country: country),
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -76,6 +90,8 @@ class HomeScreen extends StatelessWidget {
 }
 
 void openFilterSheet(BuildContext context) {
+  final controller = CountryController.instance;
+
   showModalBottomSheet(
     context: context,
     showDragHandle: true,
@@ -86,18 +102,32 @@ void openFilterSheet(BuildContext context) {
     ),
     builder: (context) {
       return Padding(
-        padding: EdgeInsets.all(AppSizes.defaultSpace),
+        padding: const EdgeInsets.all(AppSizes.defaultSpace),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text("Apply"),
-              ),
+            const Text(
+              "Filter by Region",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+
+            const SizedBox(height: AppSizes.spaceBtwItems),
+
+            // Region List
+            ...controller.regions.map((region) {
+              return Obx(() {
+                return RadioListTile<String>(
+                  title: Text(region),
+                  value: region,
+                  groupValue: controller.selectedRegion.value,
+                  onChanged: (value) {
+                    controller.setRegion(value!);
+                    Navigator.pop(context); // close sheet
+                  },
+                );
+              });
+            }),
           ],
         ),
       );

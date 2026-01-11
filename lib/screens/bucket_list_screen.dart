@@ -3,7 +3,7 @@ import 'package:country_explorer/widgets/search_and_filter.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/constants/app_sizes.dart';
-import '../widgets/country_tile.dart';
+//import '../widgets/country_tile.dart';
 
 class BucketListScreen extends StatelessWidget {
   const BucketListScreen({super.key});
@@ -27,7 +27,7 @@ class BucketListScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(
                       bottom: AppSizes.spaceBtwItems,
                     ),
-                    child: CountryTile(),
+                    //child: CountryTile(country: ,),
                   );
                 },
               ),

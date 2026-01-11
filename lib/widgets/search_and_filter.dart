@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
+import '../controllers/country_controller.dart';
 import '../screens/home_screen.dart';
 import '../utils/constants/app_sizes.dart';
 import 'container_button.dart';
@@ -10,9 +12,11 @@ class SearchAndFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = CountryController.instance;
+
     return Row(
       children: [
-        // Filter Button (Left)
+        // Filter Button
         ContainerButton(
           iconData: Iconsax.filter_copy,
           onPressed: () => openFilterSheet(context),
@@ -20,9 +24,10 @@ class SearchAndFilter extends StatelessWidget {
 
         const SizedBox(width: AppSizes.spaceBtwItems / 2),
 
-        // Search Field (Center)
+        // Search Field
         Expanded(
           child: TextFormField(
+            onChanged: controller.setSearchQuery,
             decoration: InputDecoration(
               hintText: 'Search countries...',
               prefixIcon: const Icon(Iconsax.search_normal_1_copy),
@@ -36,8 +41,15 @@ class SearchAndFilter extends StatelessWidget {
 
         const SizedBox(width: AppSizes.spaceBtwItems / 2),
 
-        // Sort Button (Right)
-        ContainerButton(iconData: Iconsax.sort_copy, onPressed: () {}),
+        //  Sort Button
+        Obx(() {
+          return ContainerButton(
+            iconData: controller.isAscending.value
+                ? Icons.sort_by_alpha
+                : Icons.sort_by_alpha_outlined,
+            onPressed: controller.toggleSortOrder,
+          );
+        }),
       ],
     );
   }

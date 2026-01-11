@@ -1,3 +1,4 @@
+import 'package:country_explorer/models/country_model.dart';
 import 'package:country_explorer/utils/helpers/helper_functions.dart';
 import 'package:country_explorer/widgets/favourite_icon.dart';
 import 'package:country_explorer/widgets/image_widget.dart';
@@ -9,19 +10,16 @@ import '../utils/constants/app_colors.dart';
 import '../utils/constants/app_sizes.dart';
 
 class CountryTile extends StatelessWidget {
-  const CountryTile({super.key});
+  const CountryTile({super.key, required this.country});
 
-  final String imageUrl = 'https://flagcdn.com/w320/lk.png';
-  final String name = 'Sri Lanka';
-  final String capital = 'Colombo';
-  final String region = 'Asia';
+  final Country country;
 
   @override
   Widget build(BuildContext context) {
     final dark = HelperFunctions.isDarkMode(context);
 
     return InkWell(
-      onTap: () => Get.to(() => CountryDetailsScreen()),
+      onTap: () => Get.to(() => CountryDetailsScreen(country: country)),
       child: Container(
         padding: const EdgeInsets.all(1),
         decoration: BoxDecoration(
@@ -44,7 +42,7 @@ class CountryTile extends StatelessWidget {
                   Align(
                     alignment: Alignment.center,
                     child: ImageWidget(
-                      imageUrl: imageUrl,
+                      imageUrl: country.flagPng,
                       isNetworkImage: true,
                       applyImageRadius: false,
                     ),
@@ -69,7 +67,7 @@ class CountryTile extends StatelessWidget {
                   children: [
                     // Country Name
                     Text(
-                      name,
+                      country.commonName,
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -81,7 +79,7 @@ class CountryTile extends StatelessWidget {
 
                     // Capital
                     Text(
-                      'Capital: $capital',
+                      'Capital: ${country.capital.isNotEmpty ? country.capital.first : "N/A"}',
                       style: Theme.of(context).textTheme.bodySmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -91,7 +89,7 @@ class CountryTile extends StatelessWidget {
 
                     // Region
                     Text(
-                      'Region: $region',
+                      'Region: ${country.region}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
