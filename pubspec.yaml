@@ -7,10 +7,12 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
+  cached_network_image: ^3.4.1
   flutter:
     sdk: flutter
   flutter_native_splash: ^2.4.7
   get: ^4.7.3
+  google_fonts: ^7.0.0
   iconsax_flutter: ^1.0.1
   shared_preferences: ^2.5.4
 
