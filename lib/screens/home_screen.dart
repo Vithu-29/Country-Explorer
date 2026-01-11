@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:country_explorer/controllers/country_controller.dart';
+import 'package:country_explorer/widgets/country_shimmer.dart';
 import 'package:country_explorer/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -61,7 +62,7 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: Obx(() {
                 if (countryController.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return CountryShimmer();
                 }
 
                 if (countryController.countryList.isEmpty) {
