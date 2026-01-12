@@ -10,6 +10,7 @@ import '../controllers/theme_controller.dart';
 import '../utils/constants/app_colors.dart';
 import '../utils/constants/app_sizes.dart';
 import '../widgets/country_tile.dart';
+import '../widgets/offline_error_widget.dart';
 import '../widgets/search_and_filter.dart';
 import 'bucket_list_screen.dart';
 
@@ -54,7 +55,7 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(AppSizes.defaultSpace),
         child: Column(
           children: [
-            SearchAndFilter(),
+            SearchAndFilter(controller: countryController),
 
             const SizedBox(height: AppSizes.spaceBtwItems),
 
@@ -65,21 +66,32 @@ class HomeScreen extends StatelessWidget {
                   return CountryShimmer();
                 }
 
+                if (countryController.isOffline.value) {
+                  return OfflineErrorWidget(
+                    onRetry: countryController.fetchCountries,
+                  );
+                }
+
                 if (countryController.countryList.isEmpty) {
                   return const Center(child: Text("No countries found"));
                 }
-                return ListView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: countryController.countryList.length,
-                  itemBuilder: (context, index) {
-                    final country = countryController.countryList[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: AppSizes.spaceBtwItems,
-                      ),
-                      child: CountryTile(country: country),
-                    );
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await countryController.fetchCountries();
                   },
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: countryController.countryList.length,
+                    itemBuilder: (context, index) {
+                      final country = countryController.countryList[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: AppSizes.spaceBtwItems,
+                        ),
+                        child: CountryTile(country: country),
+                      );
+                    },
+                  ),
                 );
               }),
             ),
@@ -88,50 +100,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-void openFilterSheet(BuildContext context) {
-  final controller = CountryController.instance;
-
-  showModalBottomSheet(
-    context: context,
-    showDragHandle: true,
-    isScrollControlled: true,
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (context) {
-      return Padding(
-        padding: const EdgeInsets.all(AppSizes.defaultSpace),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Filter by Region",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: AppSizes.spaceBtwItems),
-
-            // Region List
-            ...controller.regions.map((region) {
-              return Obx(() {
-                return RadioListTile<String>(
-                  title: Text(region),
-                  value: region,
-                  groupValue: controller.selectedRegion.value,
-                  onChanged: (value) {
-                    controller.setRegion(value!);
-                    Navigator.pop(context); // close sheet
-                  },
-                );
-              });
-            }),
-          ],
-        ),
-      );
-    },
-  );
 }

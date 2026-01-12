@@ -1,29 +1,27 @@
+import 'package:country_explorer/controllers/base_country_controller.dart';
 import 'package:get/get.dart';
 
-import '../api/api_service.dart';
+import '../db/bucketlist_db_service.dart';
 import '../models/country_model.dart';
 import '../utils/helpers/loaders.dart';
-import '../utils/helpers/network_manager.dart';
-import 'base_country_controller.dart';
 
-class CountryController extends GetxController
+class FavouritesController extends GetxController
     implements BaseCountryController {
-  static CountryController get instance => Get.find<CountryController>();
+  static FavouritesController get instance => Get.find();
 
-  final ApiService _apiService = ApiService();
+  final BucketListDbService _dbService = BucketListDbService();
 
-  RxBool isLoading = true.obs;
-  RxBool isOffline = false.obs;
-  final allCountries = <Country>[].obs;
-  final countryList = <Country>[].obs; // filtered list
+  var favouritesList = <Country>[].obs;
 
   @override
-  RxList<Country> get list => countryList;
+  RxList<Country> get list => favouritesList;
 
   @override
   final searchQuery = ''.obs;
+
   @override
   final selectedRegion = 'All'.obs;
+
   @override
   final isAscending = true.obs;
 
@@ -38,36 +36,37 @@ class CountryController extends GetxController
   ];
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    fetchCountries();
+    await _dbService.init();
+    loadFavourites();
   }
 
-  Future<void> fetchCountries() async {
-    try {
-      isLoading.value = true;
+  void loadFavourites() {
+    favouritesList.assignAll(_dbService.getFavourites());
+    applyFilters();
+  }
 
-      final isConnected = await NetworkManager.instance.isConnected();
-      if (!isConnected) {
-        isLoading.value = false;
-        isOffline.value = true;
-        return;
-      }
+  bool isFavourite(Country country) => _dbService.isFavourite(country);
 
-      final countries = await _apiService.fetchCountries();
-      allCountries.assignAll(countries);
-
-      applyFilters();
-    } catch (e) {
-      Loaders.errorSnackBar(title: "Oh Snap!", message: e.toString());
-    } finally {
-      isLoading.value = false;
+  void toggleFavourite(Country country) async {
+    if (isFavourite(country)) {
+      await _dbService.removeFavourite(country);
+      Loaders.customToast(
+        message: 'Country has been removed from the Bucket List.',
+      );
+    } else {
+      await _dbService.addFavourite(country);
+      Loaders.customToast(
+        message: 'Country has been added to the Bucket List.',
+      );
     }
+    loadFavourites();
   }
 
   @override
   void applyFilters() {
-    var temp = List<Country>.from(allCountries);
+    var temp = List<Country>.from(_dbService.getFavourites());
 
     if (searchQuery.value.isNotEmpty) {
       temp = temp
@@ -89,7 +88,7 @@ class CountryController extends GetxController
           : b.commonName.compareTo(a.commonName),
     );
 
-    countryList.assignAll(temp);
+    favouritesList.assignAll(temp);
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:country_explorer/screens/home_screen.dart';
+import 'package:country_explorer/utils/helpers/bindings/general_bindings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,6 +21,7 @@ class MainApp extends StatelessWidget {
         themeMode: themeController.isDark.value
             ? ThemeMode.dark
             : ThemeMode.light,
+        initialBinding: GeneralBindings(),
 
         home: HomeScreen(),
       ),

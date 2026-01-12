@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'custom_themes/appbar_theme.dart';
-import 'custom_themes/elevated_button_theme.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
@@ -12,7 +11,6 @@ class AppTheme {
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: AppbarTheme.lightAppBarTheme,
     textTheme: GoogleFonts.poppinsTextTheme(CustomTextTheme.lightTextTheme),
-    elevatedButtonTheme: ElevateButtonTheme.lightElevatedButtonTheme,
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -21,6 +19,5 @@ class AppTheme {
     scaffoldBackgroundColor: Colors.black,
     appBarTheme: AppbarTheme.darkAppBarTheme,
     textTheme: GoogleFonts.poppinsTextTheme(CustomTextTheme.darkTextTheme),
-    elevatedButtonTheme: ElevateButtonTheme.darkElevatedButtonTheme,
   );
 }

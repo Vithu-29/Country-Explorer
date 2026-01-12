@@ -21,7 +21,7 @@ class CountryDetailsScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: Text(country.commonName),
         showBackArrow: true,
-        actions: [FavouriteIcon()],
+        actions: [FavouriteIcon(country: country)],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSizes.defaultSpace),
@@ -68,7 +68,7 @@ class CountryDetailsScreen extends StatelessWidget {
 
             const SizedBox(height: AppSizes.spaceBtwItems),
 
-            // 📄 Info Card
+            // Info Card
             _infoRow("Capital", country.capital.join(', ')),
             _infoRow("Region", country.region),
             _infoRow("Population", country.population.toString()),
@@ -81,8 +81,8 @@ class CountryDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.spaceBtwSections),
 
-            // 📝 Notes Section
-            CountryNoteSection(),
+            // Notes Section
+            CountryNoteSection(countryName: country.commonName),
           ],
         ),
       ),
